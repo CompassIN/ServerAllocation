@@ -49,8 +49,11 @@ esac
 		filter_servers
 	elif [[ "xx$MORE" == "xxn" ]] || [[ "xx$MORE" == "xxN" ]];
 	then
+<<<<<<< HEAD
 		
 		psql -U postgres -d demo -t -c "drop table $TMP_TABLE"
+=======
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 		echo -n -e "some funtion to be written \n"
 	else 
 		echo -n -e "INVALID OPTION" 
@@ -58,7 +61,10 @@ esac
 	fi
 }
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 allocation()
 {
 echo -n -e "Please select option\n"
@@ -90,7 +96,11 @@ select_options()
 read VAR2
 for ((i=1; i<=${#ARR[@]}; i++)) ;
 do  
+<<<<<<< HEAD
 	if [[ $VAR2 -eq $i ]]; then
+=======
+	if [[ $VAR2==$i ]]; then
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 	FILTER_ALLOCATION=${ARR[$i]}
 	fi
 done
@@ -98,17 +108,26 @@ echo "more??(y or n)"
 read ANS
 if [[ "xx$ANS" == "xxy" ]] || [[ "$ANS" == "xxY" ]] ; 
 then
+<<<<<<< HEAD
 	ALLOCATION[$C]=" allocation='$FILTER_ALLOCATION' or"
+=======
+	ALLOCATION[$C]=" allocation=$FILTER_ALLOCATION or"
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 	C=$(( $C+1 ))
 	select_options
 elif [[ "xx$ANS" == "xxn" ]] || [[ "$ANS" == "xxN" ]]; 
 then 
+<<<<<<< HEAD
 	ALLOCATION[$C]=" allocation='$FILTER_ALLOCATION'"
+=======
+	ALLOCATION[$C]=" allocation=$FILTER_ALLOCATION"
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 else 
 	echo "INVALID OPTION"
 fi
 }
 select_options
+<<<<<<< HEAD
 
 TMP_TABLE1="tmp_Demo"
 psql -U postgres -d demo -t -c "create table $TMP_TABLE1 as select * from $TMP_TABLE"
@@ -119,6 +138,8 @@ psql -U postgres -d demo -t -c "create table $TMP_TABLE as select * from $TMP_TA
 psql -U postgres -d demo -t -c "drop table $TMP_TABLE1"
 
 
+=======
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 rm allocation.temp	
 }
 
@@ -153,7 +174,11 @@ insert_options
 	read VAR2
 	for ((i=1; i<=${#ARR[@]}; i++)) ;
 	do  
+<<<<<<< HEAD
 		if [[ $VAR2 -eq $i ]]; then
+=======
+		if [[ $VAR2==$i ]]; then
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 		FILTER_VERSION=${ARR[$i]}
 		fi
 	done
@@ -161,17 +186,26 @@ insert_options
 	read ANS
 	if [[ "xx$ANS" == "xxy" ]] || [[ "xx$ANS" == "xxY" ]] ; 
 	then
+<<<<<<< HEAD
 		VERSION[$C]=" ubuntu_version='$FILTER_VERSION' or"
+=======
+		VERSION[$C]=" allocation=$FILTER_VERSION or"
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 		C=$(( $C+1 ))
 		select_options
 	elif [[ "xx$ANS" == "xxn" ]] || [[ "$ANS" == "xxN" ]] ; 
 	then
+<<<<<<< HEAD
 		VERSION[$C]=" ubuntu_version='$FILTER_VERSION'"
+=======
+		VERSION[$C]=" allocation=$FILTER_VERSION"
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 	else 
 		echo "INVALID OPTION"
 	fi
 	}
 select_options
+<<<<<<< HEAD
 
 TMP_TABLE1="tmp_Demo"
 psql -U postgres -d demo -t -c "create table $TMP_TABLE1 as select * from $TMP_TABLE"
@@ -181,6 +215,8 @@ TEMP=${TEAM[@]}
 psql -U postgres -d demo -t -c "create table $TMP_TABLE as select * from $TMP_TABLE1 where $TEMP"
 psql -U postgres -d demo -t -c "drop table $TMP_TABLE1"
 
+=======
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 rm ubuntu_version.temp
 }
 
@@ -213,7 +249,11 @@ psql -X -A -U postgres -d demo -t -c 'select distinct machine_type from allocati
 	read VAR2
 	for ((i=1; i<=${#ARR[@]}; i++)) ;
 	do  
+<<<<<<< HEAD
 		if [[ $VAR2 -eq $i ]]; then
+=======
+		if [[ $VAR2==$i ]]; then
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 		FILTER_MACHINE=${ARR[$i]}
 		fi
 	done
@@ -222,17 +262,26 @@ psql -X -A -U postgres -d demo -t -c 'select distinct machine_type from allocati
 	read ANS
 	if [[ "xx$ANS" == "xxy" ]] || [[ "xx$ANS" == "xxY" ]] ; 
 	then
+<<<<<<< HEAD
 		MACHINE[$C]=" machine_type='$FILTER_MACHINE' or"
+=======
+		MACHINE[$C]=" allocation=$FILTER_MACHINE or"
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 		C=$(( $C+1 ))
 		select_options
 	elif [[ "xx$ANS" == "xxn" ]] || [[ "$ANS" == "xxN" ]]; 
 	then
+<<<<<<< HEAD
 		MACHINE[$C]=" machine_type='$FILTER_MACHINE'"
+=======
+		MACHINE[$C]=" allocation=$FILTER_MACHINE"
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 	else
 		echo "INVALID OPTION"
 	fi
 	}
 C=1
+<<<<<<< HEAD
 
 print_options
 insert_options
@@ -247,6 +296,11 @@ TEMP=${MACHINE[@]}
 psql -U postgres -d demo -t -c "create table $TMP_TABLE as select * from $TMP_TABLE1 where $TEMP"
 psql -U postgres -d demo -t -c "drop table $TMP_TABLE1"
 
+=======
+print_options
+insert_options
+select_options
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 rm machine.temp	
 }
 
@@ -279,7 +333,11 @@ psql -X -A -U postgres -d demo -t -c 'select distinct channel from allocation' >
 	read VAR2
 	for ((i=1; i<=${#ARR[@]}; i++)) ;
 	do  
+<<<<<<< HEAD
 		if [[ $VAR2 -eq $i ]]; then
+=======
+		if [[ $VAR2==$i ]]; then
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 		FILTER_CHANNEL=${ARR[$i]}
 		fi
 	done
@@ -288,12 +346,20 @@ psql -X -A -U postgres -d demo -t -c 'select distinct channel from allocation' >
 	read ANS
 	if [[ "xx$ANS" == "xxy" ]] || [[ "xx$ANS" == "xxY" ]] ; 
 	then
+<<<<<<< HEAD
 		CHANNEL[$C]=" channel='$FILTER_CHANNEL' or"
+=======
+		CHANNEL[$C]=" allocation=$FILTER_CHANNEL or"
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 		C=$(( $C+1 ))
 		select_options
 	elif [[ "xx$ANS" == "xxn" ]] || [[ "$ANS" == "xxN" ]]; 
 	then
+<<<<<<< HEAD
 		CHANNEL[$C]=" channel='$FILTER_CHANNEL'"
+=======
+		CHANNEL[$C]=" allocation=$FILTER_CHANNEL"
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 	else 
 		echo "INVALID OPTION"
 	fi
@@ -302,6 +368,7 @@ C=1
 print_options
 insert_options
 select_options
+<<<<<<< HEAD
 
 TMP_TABLE1="tmp_Demo"
 psql -U postgres -d demo -t -c "create table $TMP_TABLE1 as select * from $TMP_TABLE"
@@ -311,6 +378,8 @@ TEMP=${CHANNEL[@]}
 psql -U postgres -d demo -t -c "create table $TMP_TABLE as select * from $TMP_TABLE1 where $TEMP"
 psql -U postgres -d demo -t -c "drop table $TMP_TABLE1"
 
+=======
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 rm channel.temp
 }
 
@@ -343,7 +412,11 @@ psql -X -A -U postgres -d demo -t -c 'select distinct team from allocation' > te
 	read VAR2
 	for ((i=1; i<=${#ARR[@]}; i++)) ;
 	do  
+<<<<<<< HEAD
 		if [[ $VAR2 -eq $i ]]; then
+=======
+		if [[ $VAR2==$i ]]; then
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 		FILTER_TEAM=${ARR[$i]}
 		fi
 	done
@@ -351,12 +424,20 @@ psql -X -A -U postgres -d demo -t -c 'select distinct team from allocation' > te
 	read ANS
 	if [[ "xx$ANS" == "xxy" ]] || [[ "xx$ANS" == "xxY" ]] ; 
 	then
+<<<<<<< HEAD
 		TEAM[$C]=" team='$FILTER_TEAM' or"
+=======
+		TEAM[$C]=" allocation=$FILTER_TEAM or"
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 		C=$(( $C+1 ))
 		select_options
 	elif [[ "xx$ANS" == "xxn" ]] || [[ "$ANS" == "xxN" ]]; 
 	then
+<<<<<<< HEAD
 		TEAM[$C]=" team='$FILTER_TEAM'"
+=======
+		TEAM[$C]=" allocation=$FILTER_TEAM"
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 	else 
 		echo "INVALID OPTION"
 	fi
@@ -365,6 +446,7 @@ C=1
 print_options
 insert_options
 select_options
+<<<<<<< HEAD
 
 TMP_TABLE1="tmp_Demo"
 psql -U postgres -d demo -t -c "create table $TMP_TABLE1 as select * from $TMP_TABLE"
@@ -374,13 +456,19 @@ TEMP=${TEAM[@]}
 psql -U postgres -d demo -t -c "create table $TMP_TABLE as select * from $TMP_TABLE1 where $TEMP"
 psql -U postgres -d demo -t -c "drop table $TMP_TABLE1"
 
+=======
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 rm team.temp	
 }
 
 owner()
 {
 echo -n -e "Please select option\n"
+<<<<<<< HEAD
 psql -X -A -U postgres -d demo -t -c 'select distinct owner from allocation' > owner.temp
+=======
+psql -X -A -U postgres -d demo -t -c 'select distinct owner allocation from allocation' > owner.temp
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 	print_options()
 	{
 	COUNT=1
@@ -406,7 +494,11 @@ psql -X -A -U postgres -d demo -t -c 'select distinct owner from allocation' > o
 	read VAR2
 	for ((i=1; i<=${#ARR[@]}; i++)) ;
 	do  
+<<<<<<< HEAD
 		if [[ $VAR2 -eq $i ]]; then
+=======
+		if [[ $VAR2==$i ]]; then
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 		FILTER_OWNER=${ARR[$i]}
 		fi
 	done
@@ -415,12 +507,20 @@ psql -X -A -U postgres -d demo -t -c 'select distinct owner from allocation' > o
 	read ANS
 	if [[ "xx$ANS" == "xxy" ]] || [[ "xx$ANS" == "xxY" ]] ; 
 	then
+<<<<<<< HEAD
 		OWNER[$C]=" owner='$FILTER_OWNER' or"
+=======
+		OWNER[$C]=" allocation=$FILTER_OWNER or"
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 		C=$(( $C+1 ))
 		select_options
 	elif [[ "xx$ANS" == "xxn" ]] || [[ "$ANS" == "xxN" ]]; 
 	then
+<<<<<<< HEAD
 		OWNER[$C]=" owner='$FILTER_OWNER'"
+=======
+		OWNER[$C]=" allocation=$FILTER_OWNER"
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 	else 
 		echo "INVALID OPTION"
 	fi
@@ -429,6 +529,7 @@ C=1
 print_options
 insert_options
 select_options
+<<<<<<< HEAD
 
 TMP_TABLE1="tmp_Demo"
 psql -U postgres -d demo -t -c "create table $TMP_TABLE1 as select * from $TMP_TABLE"
@@ -439,6 +540,8 @@ psql -U postgres -d demo -t -c "create table $TMP_TABLE as select * from $TMP_TA
 psql -U postgres -d demo -t -c "drop table $TMP_TABLE1"
 
 
+=======
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 rm owner.temp	
 }
 
@@ -463,6 +566,7 @@ then
 else 
 echo -n -e "INVALID OPTION \n"
 fi
+<<<<<<< HEAD
 
 
 TMP_TABLE1="tmp_Demo"
@@ -472,10 +576,13 @@ psql -U postgres -d demo -t -c "drop table $TMP_TABLE"
 psql -U postgres -d demo -t -c "create table $TMP_TABLE as select * from $TMP_TABLE1 where status='$STATUS'"
 psql -U postgres -d demo -t -c "drop table $TMP_TABLE1"
 
+=======
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 }
 
 server_type()
 {
+<<<<<<< HEAD
 
 echo -n -e "Please select option\n"
 psql -X -A -U postgres -d demo -t -c 'select distinct server_type from allocation' > server.temp
@@ -555,15 +662,36 @@ psql -U postgres -d demo -t -c "drop table $TMP_TABLE1"
 #
 
 rm server.temp
+=======
+echo -n -e "[1] CC"
+echo -n -e "[2] VP"
+echo -n -e "[3] VM"
+read ANS
+if [[ "xx$ANS"=="xx1" ]] ;
+then
+	SERVER=CC
+elif [[ "xx$ANS"=="xx2" ]] ;
+then
+	SERVER=VP
+elif [[ "xx$ANS"=="xx3" ]] ;
+then
+	SERVER=VM
+else 
+	echo -n -e "INVALID OPTION\n"
+fi
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 }
 
 usage_root				#Main execution start
 read VAR
+<<<<<<< HEAD
 
 TMP_TABLE="demo_try"
 
 psql -U postgres -d demo -t -c "create table $TMP_TABLE as select * from my_allocation"
 
+=======
+>>>>>>> 6d44eb5c1398e3e43c579e641217a16abdba23fe
 case "$VAR" in
 	1)filter_servers ;;
 	2)generator_allocation ;;
