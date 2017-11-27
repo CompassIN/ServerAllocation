@@ -25,6 +25,32 @@ echo -n -e "[8] build_version \n"
 echo -n -e "[9] server_type \n"
 }
 
+
+###Function To print and insert the output>>
+
+print_options()
+        {
+        COUNT=1
+        while read VAR1
+        do
+                echo -n -e "[$COUNT] $VAR1\n"
+                COUNT=$(( $COUNT+1 ))
+                done < $1 
+        echo -n -e "\n"
+        }
+insert_options()
+        {
+        COUNT=1
+        while read line
+        do
+                ARR[$COUNT]=$line
+                COUNT=$(( $COUNT+1 ))
+        done < $1
+        }
+
+
+#####
+
 filter_servers()
 {
 usage_filter_servers
@@ -57,31 +83,55 @@ esac
 		usage_filter_servers
 	fi
 }
+
+
+generator_allocation()
+{
+
+options()
+        {
+
+        read VAR2
+        for ((i=1; i<=${#ARR[@]}; i++)) ;
+        do  
+                if [[ $VAR2 -eq $i ]]; then
+                FILTER=${ARR[$i]}
+                fi
+        done
+        }
+
+echo -n -e "select team you want to allocate generator"
+
+team
+
+echo -n -e "select channel for team $FILTER_TEAM"
+
+channel
+
+echo -n -e "Following controller machines are dedicated to $FILTER_CHANNEL channel of $FILTER_TEAM \n"
+
+psql -X  -U postgres -d demo -t -c "select server_name,  server_ip, blade_name from $TMP_TABLE where  machine_type='Controller'" > controller.temp
+
+print_options controller.temp
+insert_options controller.temp
+
+options 
+
+echo -n -e "Following are the Dedicated generators for this machine and blade.\n"
+psql  -X  -U postgres -d demo -t -c "select server_name, server_ip, blade_name from $TMP_TABLE where team='$FILTER_TEAM' and channel='$FILTER_CHANNEL' and machine_type='Generator'" | tee dedicated_$FILTER_TEAM.list; sed -i -r 's/\s+//g' dedicated_$FILTER_TEAM.list
+echo -n -e "\nFollowing are the free Generators\n"
+psql  -X  -U postgres -d demo -t -c "select server_name, server_ip, blade_name from allocation where allocation='Free'"| tee free_$FILTER_TEAM.list;sed -i -r 's/\s+//g' free_$FILTER_TEAM.list
+
+
+}
+
+
 allocation()
 {
 echo -n -e "Please select option\n"
 psql -X -A -U postgres -d demo -t -c 'select distinct allocation from allocation' > allocation.temp
-	print_options()
-	{
-	COUNT=1
-	while read VAR1
-	do 
-		echo -n -e "[$COUNT] $VAR1\n"
-		COUNT=$(( $COUNT+1 ))
-		done < allocation.temp
-	echo -n -e "\n"
-	}
-	insert_options()
-	{
-	COUNT=1
-	while read line
-	do 
-		ARR[$COUNT]=$line
-		COUNT=$(( $COUNT+1 ))
-	done < allocation.temp
-	}
-print_options
-insert_options
+print_options allocation.temp
+insert_options allocation.temp
 C=1
 select_options()
 {
@@ -124,28 +174,9 @@ ubuntu_version()
 {
 echo -n -e "Please select option\n"
 psql -X -A -U postgres -d demo -t -c 'select distinct ubuntu_version from allocation' > ubuntu_version.temp
-	print_options()
-	{
-	COUNT=1
-	while read VAR1
-	do 
-		echo -n -e "[$COUNT] $VAR1\n"
-		COUNT=$(( $COUNT+1 ))
-		done < ubuntu_version.temp
-	echo -n -e "\n"
-	}
-	insert_options()
-	{
-	COUNT=1
-	while read line
-	do 
-		ARR[$COUNT]=$line
-		COUNT=$(( $COUNT+1 ))
-	done < ubuntu_version.temp
-	}
 C=1
-print_options
-insert_options
+print_options ubuntu_version.temp
+insert_options ubuntu_version.temp
 	select_options()
 	{
 	read VAR2
@@ -186,25 +217,6 @@ machine_type()
 {
 echo -n -e "Please select option\n"
 psql -X -A -U postgres -d demo -t -c 'select distinct machine_type from allocation' > machine.temp
-	print_options()
-	{
-	COUNT=1
-	while read VAR1
-	do 
-		echo -n -e "[$COUNT] $VAR1\n"
-		COUNT=$(( $COUNT+1 ))
-		done < machine.temp
-	echo -n -e "\n"
-	}
-	insert_options()
-	{
-	COUNT=1
-	while read line
-	do 
-		ARR[$COUNT]=$line
-		COUNT=$(( $COUNT+1 ))
-	done < machine.temp
-	}
 	select_options()
 	{
 	
@@ -232,8 +244,8 @@ psql -X -A -U postgres -d demo -t -c 'select distinct machine_type from allocati
 	}
 C=1
 
-print_options
-insert_options
+print_options machine.temp
+insert_options machine.temp
 select_options
 
 
@@ -251,26 +263,13 @@ rm machine.temp
 channel()
 {
 echo -n -e "Please select option\n"
-psql -X -A -U postgres -d demo -t -c 'select distinct channel from allocation' > channel.temp
-	print_options()
-	{
-	COUNT=1
-	while read VAR1
-	do 
-		echo -n -e "[$COUNT] $VAR1\n"
-		COUNT=$(( $COUNT+1 ))
-		done < channel.temp
-	echo -n -e "\n"
-	}
-	insert_options()
-	{
-	COUNT=1
-	while read line
-	do 
-		ARR[$COUNT]=$line
-		COUNT=$(( $COUNT+1 ))
-	done < channel.temp
-	}
+if [ $VAR -eq 1 ];
+then
+	psql -X -A -U postgres -d demo -t -c 'select distinct channel from allocation' > channel.temp
+else 
+	psql -X -A -U postgres -d demo -t -c "select distinct channel from $TMP_TABLE" > channel.temp
+fi
+
 	select_options()
 	{
 	
@@ -281,9 +280,15 @@ psql -X -A -U postgres -d demo -t -c 'select distinct channel from allocation' >
 		FILTER_CHANNEL=${ARR[$i]}
 		fi
 	done
+	if [ $VAR -eq 1 ];
+        then
 
-	echo "more??(y or n)"
-	read ANS
+                echo "more??(y or n)"
+                read ANS
+        else
+                ANS='n'
+        fi
+
 	if [[ "xx$ANS" == "xxy" ]] || [[ "xx$ANS" == "xxY" ]] ; 
 	then
 		CHANNEL[$C]=" channel='$FILTER_CHANNEL' or"
@@ -297,9 +302,10 @@ psql -X -A -U postgres -d demo -t -c 'select distinct channel from allocation' >
 	fi
 	}
 C=1
-print_options
-insert_options
+print_options channel.temp
+insert_options channel.temp
 select_options
+
 TMP_TABLE1="tmp_Demo"
 psql -U postgres -d demo -t -c "create table $TMP_TABLE1 as select * from $TMP_TABLE"
 psql -U postgres -d demo -t -c "drop table $TMP_TABLE"
@@ -314,25 +320,6 @@ team()
 {
 echo -n -e "Please select option\n"
 psql -X -A -U postgres -d demo -t -c 'select distinct team from allocation' > team.temp
-	print_options()
-	{
-	COUNT=1
-	while read VAR1
-	do 
-		echo -n -e "[$COUNT] $VAR1\n"
-		COUNT=$(( $COUNT+1 ))
-		done < team.temp
-	echo -n -e "\n"
-	}
-	insert_options()
-	{
-	COUNT=1
-	while read line
-	do 
-		ARR[$COUNT]=$line
-		COUNT=$(( $COUNT+1 ))
-	done < team.temp
-	}
 	select_options()
 	{
 	
@@ -343,8 +330,14 @@ psql -X -A -U postgres -d demo -t -c 'select distinct team from allocation' > te
 		FILTER_TEAM=${ARR[$i]}
 		fi
 	done
-	echo "more??(y or n)"
-	read ANS
+	if [ $VAR -eq 1 ];
+	then
+			
+		echo "more??(y or n)"
+		read ANS
+	else 
+		ANS='n'
+	fi
 	if [[ "xx$ANS" == "xxy" ]] || [[ "xx$ANS" == "xxY" ]] ; 
 	then
 		TEAM[$C]=" team='$FILTER_TEAM' or"
@@ -358,8 +351,8 @@ psql -X -A -U postgres -d demo -t -c 'select distinct team from allocation' > te
 	fi
 	}
 C=1
-print_options
-insert_options
+print_options team.temp
+insert_options team.temp
 select_options
 
 TMP_TABLE1="tmp_Demo"
@@ -377,25 +370,6 @@ owner()
 {
 echo -n -e "Please select option\n"
 psql -X -A -U postgres -d demo -t -c 'select distinct owner from allocation' > owner.temp
-	print_options()
-	{
-	COUNT=1
-	while read VAR1
-	do 
-		echo -n -e "[$COUNT] $VAR1\n"
-		COUNT=$(( $COUNT+1 ))
-		done < owner.temp
-	echo -n -e "\n"
-	}
-	insert_options()
-	{
-	COUNT=1
-	while read line
-	do 
-		ARR[$COUNT]=$line
-		COUNT=$(( $COUNT+1 ))
-	done < owner.temp
-	}
 	select_options()
 	{
 	
@@ -422,8 +396,8 @@ psql -X -A -U postgres -d demo -t -c 'select distinct owner from allocation' > o
 	fi
 	}
 C=1
-print_options
-insert_options
+print_options owner.temp
+insert_options owner.temp
 select_options
 
 TMP_TABLE1="tmp_Demo"
@@ -475,25 +449,6 @@ server_type()
 
 echo -n -e "Please select option\n"
 psql -X -A -U postgres -d demo -t -c 'select distinct server_type from allocation' > server.temp
-	print_options()
-	{
-	COUNT=1
-	while read VAR1
-	do 
-		echo -n -e "[$COUNT] $VAR1\n"
-		COUNT=$(( $COUNT+1 ))
-		done < server.temp
-	echo -n -e "\n"
-	}
-	insert_options()
-	{
-	COUNT=1
-	while read line
-	do 
-		ARR[$COUNT]=$line
-		COUNT=$(( $COUNT+1 ))
-	done < server.temp
-	}
 	select_options()
 	{
 	
@@ -520,8 +475,8 @@ psql -X -A -U postgres -d demo -t -c 'select distinct server_type from allocatio
 	fi
 	}
 C=1
-print_options
-insert_options
+print_options server.temp
+insert_options server.temp
 select_options
 
 TMP_TABLE1="tmp_Demo"
@@ -532,23 +487,6 @@ TEMP=${SERVER[@]}
 psql -U postgres -d demo -t -c "create table $TMP_TABLE as select * from $TMP_TABLE1 where $TEMP"
 psql -U postgres -d demo -t -c "drop table $TMP_TABLE1"
 
-#echo -n -e "[1] CC"
-#echo -n -e "[2] VP"
-#echo -n -e "[3] VM"
-#read ANS
-#if [[ "xx$ANS"=="xx1" ]] ;
-#then
-#	SERVER=CC
-#elif [[ "xx$ANS"=="xx2" ]] ;
-#then
-#	SERVER=VP
-#elif [[ "xx$ANS"=="xx3" ]] ;
-#then
-#	SERVER=VM
-#else 
-#	echo -n -e "INVALID OPTION\n"
-#fi
-#
 
 rm server.temp
 }
@@ -558,7 +496,7 @@ read VAR
 
 TMP_TABLE="demo_try"
 
-psql -U postgres -d demo -t -c "create table $TMP_TABLE as select * from my_allocation"
+psql -U postgres -d demo -t -c "create table $TMP_TABLE as select * from allocation"
 case "$VAR" in
 	1)filter_servers ;;
 	2)generator_allocation ;;
@@ -567,4 +505,3 @@ case "$VAR" in
 	*) echo "INVALID OPTION" 
 	usage_root ;;
 esac
-
